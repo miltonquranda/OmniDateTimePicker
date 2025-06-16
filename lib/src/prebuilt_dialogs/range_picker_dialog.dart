@@ -34,7 +34,7 @@ class RangePickerDialog extends StatefulWidget {
   final bool? isForce2Digits;
   final bool? looping;
   final Widget? selectionOverlay;
-
+  final bool moveToEndAfterStartDateSelection;
   final EdgeInsets? padding;
   final EdgeInsets? insetPadding;
   final BorderRadiusGeometry? borderRadius;
@@ -80,6 +80,7 @@ class RangePickerDialog extends StatefulWidget {
     this.onStartDateAfterEndDateError,
     this.defaultTab,
     this.actionsBuilder,
+    this.moveToEndAfterStartDateSelection = false,
   }) : isForceEndDateAfterStartDate = isForceEndDateAfterStartDate ?? false;
 
   @override
@@ -100,8 +101,8 @@ class _RangePickerDialogState extends State<RangePickerDialog>
       vsync: this,
       initialIndex: widget.defaultTab?.index ?? 0,
     );
-    _selectedStartDateTime = widget.startInitialDate ?? DateTime.now();
-    _selectedEndDateTime = widget.endInitialDate ?? DateTime.now();
+    _selectedStartDateTime = widget.startInitialDate; //?? DateTime.now();
+    _selectedEndDateTime = widget.endInitialDate;//?? DateTime.now();
 
     assert(
       !(widget.isForceEndDateAfterStartDate &&
@@ -213,13 +214,26 @@ class _RangePickerDialogState extends State<RangePickerDialog>
                   Navigator.of(context).pop<DateTime>();
                 },
                 onSavePressed: () {
+                  debugPrint(
+                    'Selected Start Date: $_selectedStartDateTime, '
+                    'Selected End Date: $_selectedEndDateTime',
+                  );
                   if (widget.isForceEndDateAfterStartDate) {
                     if (_selectedEndDateTime!
                         .isBefore(_selectedStartDateTime!)) {
                       if (widget.onStartDateAfterEndDateError != null) {
                         widget.onStartDateAfterEndDateError!();
                       }
-
+                      _tabController.animateTo(1);
+                      return;
+                    }
+                    if(_selectedStartDateTime != null && _tabController.index == 0) {
+                      if(widget.endInitialDate == null && _selectedEndDateTime == null) {
+                        _selectedEndDateTime = _selectedStartDateTime!.add(
+                          const Duration(hours: 4),
+                        );
+                      }
+                      _tabController.animateTo(1);
                       return;
                     }
                   }

@@ -103,6 +103,7 @@ Future<List<DateTime>?> showOmniDateTimeRangePicker({
   int? secondsInterval,
   bool? isForce2Digits,
   bool? isForceEndDateAfterStartDate,
+  bool? moveToEndAfterStartDateSelection,
   void Function()? onStartDateAfterEndDateError,
   BorderRadiusGeometry? borderRadius,
   Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
@@ -153,6 +154,7 @@ Future<List<DateTime>?> showOmniDateTimeRangePicker({
           endLabelWidget: endWidget,
           separator: separator,
           type: type,
+          moveToEndAfterStartDateSelection: moveToEndAfterStartDateSelection ?? false,
           startInitialDate: startInitialDate,
           startFirstDate: startFirstDate,
           startLastDate: startLastDate,
